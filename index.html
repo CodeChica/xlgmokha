@@ -35,33 +35,40 @@
       </div>
     </div>
     <div id="app" class="container">
-      <li v-for="sparkle in sparkles">
+      <h2>My Sparkles</h2>
+      <li v-for="sparkle in mySparkles()">
         {{ sparkle.sparklee }} {{ sparkle.reason }}
       </li>
-
-      <button @click="fetchSparkles">
-        Fetch Sparkles
-      </button>
-      {{message}}
     </div>
     <script>
       const { createApp } = Vue;
 
       createApp({
+        created() {
+          this.fetchSparkles();
+          this.intervalId = setInterval(() => this.fetchSparkles(), 5000);
+        },
+        destroyed() {
+          if (this.intervalId)
+            clearInterval(this.intervalId);
+          this.intervalId = null;
+        },
         data() {
           return {
-            message: "",
+            intervalId: null,
             sparkles: []
           }
         },
         methods: {
           fetchSparkles() {
-            this.message = "loading...";
-            let url = "https://sparklehub.herokuapp.com/sparkles.json";
-            fetch(url)
+            fetch("https://sparklehub.herokuapp.com/sparkles.json")
               .then((response) => response.json())
               .then((json) => this.sparkles = json)
-              .then(() => this.message = "")
+          },
+          mySparkles() {
+            return this.sparkles.filter((sparkle) => {
+              return sparkle.sparklee.includes("mo");
+            });
           }
         }
       }).mount('#app')
