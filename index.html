@@ -12,7 +12,7 @@
         <p>
           I like to eat cookies all the time!
           Sometimes I also like to nibble on ice cream products.
-          <img src="./images/cookies.jpeg" />
+          <img src="./images/cookies.jpeg" width="200px" />
         </p>
       </div>
       <div>
@@ -34,5 +34,37 @@
         </ol>
       </div>
     </div>
+    <div id="app" class="container">
+      <li v-for="sparkle in sparkles">
+        {{ sparkle.sparklee }} {{ sparkle.reason }}
+      </li>
+
+      <button @click="fetchSparkles">
+        Fetch Sparkles
+      </button>
+      {{message}}
+    </div>
+    <script>
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            message: "",
+            sparkles: []
+          }
+        },
+        methods: {
+          fetchSparkles() {
+            this.message = "loading...";
+            let url = "https://sparklehub.herokuapp.com/sparkles.json";
+            fetch(url)
+              .then((response) => response.json())
+              .then((json) => this.sparkles = json)
+              .then(() => this.message = "")
+          }
+        }
+      }).mount('#app')
+    </script>
   </body>
 </html>
